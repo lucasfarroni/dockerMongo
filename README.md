@@ -12,7 +12,7 @@ Steps to run the application
     4.Once the containers are up and running, use the command docker exec -it dockermongo-php-1 /bin/bash to access the PHP container
     5.Inside the container, run the command ' composer install ' to install the required dependencies
     6.Exit the container using the command ' exit '
-    7.Restart the container
+    7."docker compose up -d " 
     8.Visit localhost:8080/ in your browser to see the application
 
 Note
