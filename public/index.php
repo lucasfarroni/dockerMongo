@@ -5,15 +5,9 @@ $pis = [];
 
 $db = (new MongoDB\Client('mongodb://mongodb'))->selectDatabase('initmongodb');
 $data = json_decode(file_get_contents('https://geoservices.grand-nancy.org/arcgis/rest/services/public/VOIRIE_Parking/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=nom%2Cadresse%2Cplaces%2Ccapacite&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=pjson'));
-
-if ($db->listCollections(['filter' => ['name' => 'pis']])) {
-    header("Location: index.html");
-    exit();
-}
-else {
-    $db->createCollection('pis');
-    $dbpis = $db->selectCollection('pis');
-
+$dbpis = $db->selectCollection('pis');
+$count = $dbpis->countDocuments();
+if ($count == 0) {
     foreach ($data->features as $feature) {
         $pi = [
             'name' => $feature->attributes->NOM,
@@ -34,20 +28,17 @@ else {
     if (count($pis) > 0) {
         $res = $dbpis->insertMany($pis);
     }
+} else {
+    header("Location: index.html");
+    exit();
 }
 
 // Ajouter une nouvelle collection pour les vélos
 $db = (new MongoDB\Client('mongodb://mongodb'))->selectDatabase('initmongodb');
 $data = json_decode(file_get_contents('https://api.jcdecaux.com/vls/v3/stations?apiKey=frifk0jbxfefqqniqez09tw4jvk37wyf823b5j1i&contract=nancy'));
-
-if ($db->listCollections(['filter' => ['name' => 'bikes']])) {
-    header("Location: index.html");
-    exit();
-}
-else {
-    $db->createCollection('bikes');
-    $db = $db->selectCollection('bikes');
-
+$db = $db->selectCollection('bikes');
+$count = $db->countDocuments();
+if ($count == 0) {
     foreach ($data as $feature) {
         $bike = [
             'name' => $feature->name,
@@ -69,4 +60,7 @@ else {
     if (count($bikes) > 0) {
         $res = $db->insertMany($bikes);
     }
+} else {
+    header("Location: index.html");
+    exit();
 }
