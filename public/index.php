@@ -28,3 +28,31 @@ foreach ($data->features as $feature) {
 if (count($pis) > 0) {
     $res = $db->insertMany($pis);
 }
+
+// Ajouter une nouvelle collection pour les vélos
+$db = (new MongoDB\Client('mongodb://mongodb'))->selectDatabase('initmongodb');
+$data = json_decode(file_get_contents('https://api.jcdecaux.com/vls/v3/stations?apiKey=frifk0jbxfefqqniqez09tw4jvk37wyf823b5j1i&contract=nancy'));
+$db->createCollection('bikes');
+$db = $db->selectCollection('bikes');
+
+foreach ($data as $feature) {
+    $bike = [
+        'name' => $feature->name,
+        'address' => $feature->address,
+        'description' => '',
+        'category' => [
+            'name' => 'bike',
+            'icon' => 'fa-bicycle',
+            'color' => 'green'
+        ],
+        'position' => $feature->position,
+        'bikeDisponible' => $feature->totalStands->availabilities->bikes,
+        'capacity' => $feature->totalStands->capacity,
+        'status' => $feature->status,
+    ];
+    $bikes[] = $bike;
+}
+
+if (count($bikes) > 0) {
+    $res = $db->insertMany($bikes);
+}
