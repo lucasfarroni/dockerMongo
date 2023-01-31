@@ -13,7 +13,7 @@ Steps to run the application
     5.Inside the container, run the command ' composer install ' to install the required dependencies
     6.Exit the container using the command ' exit '
     7.Restart the container
-    8.Visit localhost:8080/index.html in your browser to see the application
+    8.Visit localhost:8080/ in your browser to see the application
 
 Note
 
